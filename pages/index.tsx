@@ -1,29 +1,26 @@
 import React from 'react'
+import { _getFriendSession, _getNewSession, _postMove } from '../services'
 
-enum PIECE {
-  CIRCLE = "CIRCLE",
-  CROSS = "CROSS",
-  EMPTY = "EMPTY"
-}
+import { PIECE } from './enums'
 
-const NUM_ROWS = 3
-const NUM_COLS = NUM_ROWS
+const BOARD_SIZE = 3
 
 interface IHomeProps {}
 interface IHomeState {
   board: Array<Array<PIECE>>,
   activePiece: PIECE,
-  started: boolean
+  started: boolean,
+  sessionId: string | null
 }
 
 function initBoard(){
   const board = [] as Array<Array<PIECE>>
 
-  for (let i = 0; i < NUM_ROWS; i++) {
+  for (let i = 0; i < BOARD_SIZE; i++) {
     if (!board[i]){
       board[i] = []
     }
-    for (let j = 0; j < NUM_COLS; j++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
       board[i][j] = PIECE.EMPTY
     }
   }
@@ -36,19 +33,22 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   state = {
     board: initBoard(),
     activePiece: PIECE.CIRCLE,
-    started: false
+    started: false,
+    sessionId: null
   }
   
   render() {
     return (
       <div>
+          {this.state.sessionId}
           {this.state.board.map( (row, rowIndex) => {
             return (
               <div>
                 {row.map( (piece, colIndex) => {
                   return (
                     <span
-                    onClick={()=>this.handleClick({ rowIndex, colIndex })}
+                    key={`piece-${rowIndex}-${colIndex}`}
+                    onClick={()=>this.handleMove({ rowIndex, colIndex })}
                     style={{
                       height: 100,
                       width: 100,
@@ -62,13 +62,46 @@ class Home extends React.Component<IHomeProps, IHomeState> {
               </div>
             )
           })}
+          <input
+            onChange={(e: any) => this.handleChangeSessionId(e.target.value)}
+          />
+          <button
+            onClick={this.handleSubmitSessionId}
+          >OK</button>
       </div>
     )
   }
 
-  handleClick = ({ rowIndex, colIndex } : { rowIndex: number, colIndex: number }) => {
+  async componentDidMount(){
+    try {
+      const res = await _getNewSession(BOARD_SIZE)
+      console.log(res)
+      const { sessionId } = res.data
+      this.setState({ sessionId })
+    } catch(e) {console.log(e)}
+  }
+
+  handleChangeSessionId = (sessionId: string) => {
+    this.setState({sessionId})
+  }
+
+  handleSubmitSessionId = async () => {
+    try {
+      const sessionId = this.state.sessionId as any as string
+      const res = await _getFriendSession(sessionId)
+      const { board } = res.data
+      this.setState({ board })
+    } catch(e) {console.log(e)}
+  }
+
+  handleMove = async ({ rowIndex, colIndex } : { rowIndex: number, colIndex: number }) => {
     const { board } = this.state
     board[rowIndex][colIndex] = this.state.activePiece
+
+    const sessionId = this.state.sessionId as any as string
+    
+    await _postMove(sessionId, rowIndex, colIndex, this.state.activePiece)
+
     this.setState({ 
       started: true,
       board
@@ -100,8 +133,8 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   checkWinHorizontal = (rowIndex: number) => {
-    const i = Math.floor(rowIndex / NUM_ROWS)
-    for (let j = 0; j < NUM_COLS; j++) {
+    const i = Math.floor(rowIndex / BOARD_SIZE)
+    for (let j = 0; j < BOARD_SIZE; j++) {
       if (this.state.board[i][j] != this.state.activePiece) {
         return false
       }
@@ -111,7 +144,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
   checkWinVertical = (colIndex: number) => {
     const j = colIndex
-    for (let i = 0; i < NUM_ROWS; i++) {
+    for (let i = 0; i < BOARD_SIZE; i++) {
       if(this.state.board[i][j] != this.state.activePiece) {
         return false
       }
@@ -126,7 +159,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
     let i = 0;
     let j = 0;
-    while (i < NUM_ROWS && j < NUM_COLS) {
+    while (i < BOARD_SIZE && j < BOARD_SIZE) {
       if (this.state.board[i][j] != this.state.activePiece) {
         return false
       }
@@ -137,12 +170,12 @@ class Home extends React.Component<IHomeProps, IHomeState> {
   }
 
   checkWinRightDiagonal = (rowIndex: number, colIndex: number) => {
-    if (rowIndex + colIndex != NUM_ROWS - 1) {
+    if (rowIndex + colIndex != BOARD_SIZE - 1) {
       return false
     }
-    let i = NUM_ROWS - 1
+    let i = BOARD_SIZE - 1
     let j = 0;
-    while (i >= 0 && j < NUM_COLS) {
+    while (i >= 0 && j < BOARD_SIZE) {
       if (this.state.board[i][j] != this.state.activePiece) {
         return false
       }
