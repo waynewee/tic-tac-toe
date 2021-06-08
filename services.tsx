@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import {PIECE} from './pages/enums'
+import {PIECE} from './enums'
 
 export const _getNewSession = (boardSize: number) => axios({
   method: 'get',

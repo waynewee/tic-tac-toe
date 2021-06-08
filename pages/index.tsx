@@ -1,7 +1,7 @@
 import React from 'react'
 import { _getSession, _getNewSession, _postMove } from '../services'
 
-import { GAME_TYPE, PIECE } from './enums'
+import { GAME_TYPE, PIECE } from '../enums'
 
 const DEFAULT_BOARD_SIZE = 3
 
