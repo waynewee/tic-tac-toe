@@ -3,3 +3,9 @@ export enum PIECE {
   CROSS = "CROSS",
   EMPTY = "EMPTY"
 }
+
+export enum GAME_TYPE {
+  LOCAL = "LOCAL",
+  ONLINE_HOST = "ONLINE_HOST",
+  ONLINE_JOIN = "ONLINE_JOIN"
+}

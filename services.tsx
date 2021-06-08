@@ -5,13 +5,13 @@ import {PIECE} from './pages/enums'
 export const _getNewSession = (boardSize: number) => axios({
   method: 'get',
   withCredentials: true,
-  url: `http://localhost:8000/${boardSize}`
+  url: `http://localhost:8000/new/${boardSize}`
 })
 
-export const _getFriendSession = (sessionId: string) => axios({
+export const _getSession = (sessionId: string, playerName?: string) => axios({
   method: 'get',
   withCredentials: true,
-  url: `http://localhost:8000/session/${sessionId}`
+  url: `http://localhost:8000/${sessionId}${playerName?`?playerName=${playerName}`:''}`
 })
 
 export const _postMove = (sessionId: string, rowIndex: number, colIndex: number, piece: PIECE) => axios({
