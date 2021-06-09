@@ -15,7 +15,8 @@ class HomePage extends React.Component {
             position: 'fixed',
             bottom: 10,
             right: 24,
-            fontWeight: 600
+            fontWeight: 600,
+            fontSize: 12
           }}>
             © 2021 Wayne Wee
           </div>

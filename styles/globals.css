@@ -29,6 +29,19 @@ input.error {
   outline: none;
 }
 
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
+
+.align-flex-end {
+  display: flex;
+  align-items: flex-end;
+}
+
 .input-label {
   margin-bottom: 12px;
   font-weight: 600;
@@ -66,6 +79,13 @@ input.error {
 {
   background: #282828;
   color: #fff;
+}
+
+@media only screen and (max-width: 768px) {
+  .default-button:hover {
+    background: auto;
+    color: auto;
+  }
 }
 
 .default-button.disabled {
@@ -121,6 +141,23 @@ input.error {
 
 .game-value {
   font-size: 20px;
+}
+
+.game-turn-label {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.game-turn-label svg {
+  height: 24px;
+  width: 24px;
+}
+
+.game-detail-container {
+  margin-bottom: 12px;
 }
 
 .win-overlay-background {

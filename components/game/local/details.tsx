@@ -1,5 +1,6 @@
 import React from 'react'
 import { PIECE } from '../../enums'
+import { circleIcon, crossIcon } from '../../icons'
 
 interface ILocalGameDetailsProps {
   activePiece: PIECE
@@ -8,10 +9,12 @@ interface ILocalGameDetailsProps {
 class LocalGameDetails extends React.Component<ILocalGameDetailsProps> {
   render() {
     return (
-      <div>
-        <div className="game-detail">
-          <div className="game-label">Your Turn:</div>
-          <div className="game-value">{this.props.activePiece}</div>
+      <div className="game-detail-container">
+        <div className="game-turn-label">
+          {this.props.activePiece == PIECE.CIRCLE? circleIcon : crossIcon} 
+          <span style={{ fontWeight: 400, opacity: 0.8, marginLeft: 8}}>
+            Turn
+          </span>
         </div>
       </div>
     )

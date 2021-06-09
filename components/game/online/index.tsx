@@ -56,14 +56,14 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
       if (this.props.gameType == GAME_TYPE.ONLINE_HOST) {
         return (
           <BoardSizeInput
-            onBack={this.props.onQuit}
+            onBack={this.handleQuit}
             onSubmit={this.handleSubmitBoardSize}
           />
         )
       } else {
         return (
           <SessionIdInput
-            onBack={this.props.onQuit}
+            onBack={this.handleQuit}
             onChange={this.handleChangeSessionId}
             onSubmit={this.handleSubmitSessionId}
           />
@@ -81,20 +81,21 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
         {this.state.showWinState && 
         <WinOverlay
           winnerName={playerName}
-          onClickMenu={this.props.onQuit}
+          onClickMenu={this.handleQuit}
         />
         }
         {this.state.showLoseState &&
         <WinOverlay
           isLoseState
           winnerName={opponentName}
-          onClickMenu={this.props.onQuit}
+          onClickMenu={this.handleQuit}
         />
         }
         <Board
           renderGameDetails={() => {
             return (
               <OnlineGameDetails
+                isOwnTurn={!this.state.disabled}
                 playerName={playerName}
                 opponentName={opponentName}
                 sessionId={sessionId}
@@ -129,6 +130,13 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
       return session.awayPlayerName
     }
     return session.homePlayerName
+  }
+
+  handleQuit = (e: any) => {
+    if (this.state.pollId) {
+      clearInterval(this.state.pollId as any as number)
+    }
+    this.props.onQuit(e)
   }
 
   handleSubmitBoardSize = async (boardSize: number) => {
