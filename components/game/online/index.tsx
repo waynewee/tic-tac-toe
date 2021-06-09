@@ -111,6 +111,10 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     )
   }
 
+  componentDidMount() {
+    this.setState({ disabled: this.props.gameType == GAME_TYPE.ONLINE_JOIN })
+  }
+
   getMyPiece = () => {
     if (this.props.gameType == GAME_TYPE.ONLINE_HOST) {
       return PIECE.CIRCLE
