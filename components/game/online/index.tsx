@@ -47,6 +47,10 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
 
   render(){
 
+    if (this.state.loading) {
+      return (<Loader/>)
+    }
+
     if (!this.state.started) {
       
       if (this.props.gameType == GAME_TYPE.ONLINE_HOST) {
@@ -87,26 +91,21 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
           onClickMenu={this.props.onQuit}
         />
         }
-        <>
-          {this.state.loading ?
-          <Loader/>
-          :
-          <Board
-            renderGameDetails={() => {
-              return (
-                <OnlineGameDetails
-                  playerName={playerName}
-                  opponentName={opponentName}
-                  sessionId={sessionId}
-                />
-              )
-            }}
-            {...this.props}
-            disabled={this.state.disabled}
-            board={this.state.board}
-            onMove={this.handleMove}
-          />}
-        </>
+        <Board
+          renderGameDetails={() => {
+            return (
+              <OnlineGameDetails
+                playerName={playerName}
+                opponentName={opponentName}
+                sessionId={sessionId}
+              />
+            )
+          }}
+          {...this.props}
+          disabled={this.state.disabled}
+          board={this.state.board}
+          onMove={this.handleMove}
+        />
       </>
     )
   }
