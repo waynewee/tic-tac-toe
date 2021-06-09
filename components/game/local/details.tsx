@@ -12,7 +12,7 @@ class LocalGameDetails extends React.Component<ILocalGameDetailsProps> {
       <div className="game-detail-container">
         <div className="game-turn-label">
           {this.props.activePiece == PIECE.CIRCLE? circleIcon : crossIcon} 
-          <span style={{ fontWeight: 400, opacity: 0.8, marginLeft: 8}}>
+          <span style={{ marginLeft: 8}}>
             Turn
           </span>
         </div>

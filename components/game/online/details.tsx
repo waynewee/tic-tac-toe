@@ -25,7 +25,13 @@ class OnlineGameDetails extends React.Component<IOnlineGameDetailsProps> {
             <div className="game-value">{this.props.sessionId}</div>
           </div>
         </div>
-        <div className="column">
+        <div 
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-end'
+        }}
+        className="column">
           <div className="game-turn-label">
             {this.props.isOwnTurn?<span>Your Turn</span>:<span>Enemy Turn</span>}
           </div>
