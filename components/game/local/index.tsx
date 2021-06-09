@@ -2,10 +2,10 @@ import React, { MouseEventHandler } from 'react'
 import Board from '../../board'
 import { DEFAULT_BOARD_SIZE } from '../../constants'
 import { PIECE } from '../../enums'
+import { circleIcon, crossIcon } from '../../icons'
 import BoardSizeInput from '../../peripherals/board-size-input'
 import WinOverlay from '../../peripherals/win-overlay'
 import { checkWin, initBoard } from '../../utils'
-import LocalGameDetails from './details'
 
 interface ILocalGameProps {
   onQuit: MouseEventHandler<HTMLDivElement>
@@ -49,18 +49,27 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
         />
         }
         <>
-          <Board
-            renderGameDetails={() => {
-              return (
-                <LocalGameDetails
-                  activePiece={this.state.activePiece}
-                />
-              )
-            }}
-            {...this.props}
-            board={this.state.board}
-            onMove={this.handleMove}
-          />
+          <div className="board-container">
+            <div 
+            style={{ marginBottom: 8}}
+            className="turn-label">
+              {this.state.activePiece == PIECE.CIRCLE? circleIcon : crossIcon}
+              <span>
+                Turn
+              </span>
+            </div>
+            <Board
+              {...this.props}
+              board={this.state.board}
+              onMove={this.handleMove}
+            />
+            <div
+              className="default-button"
+              onClick={this.props.onQuit}
+            >
+              Quit
+            </div>
+          </div>
         </>
       </>
     )

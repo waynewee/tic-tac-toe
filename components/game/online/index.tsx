@@ -91,28 +91,37 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
           onClickMenu={this.handleQuit}
         />
         }
-        <Board
-          renderGameDetails={() => {
-            return (
-              <OnlineGameDetails
-                isOwnTurn={!this.state.disabled}
-                playerName={playerName}
-                opponentName={opponentName}
-                sessionId={sessionId}
-              />
-            )
-          }}
-          {...this.props}
-          disabled={this.state.disabled}
-          board={this.state.board}
-          onMove={this.handleMove}
-        />
+        <div className="board-container">
+          <OnlineGameDetails
+            isOwnTurn={!this.state.disabled}
+            playerName={playerName}
+            opponentName={opponentName}
+            sessionId={sessionId}
+          />
+          <div 
+            style={{ marginBottom: 8, fontStyle: 'italic'}}
+            className={`turn-label${this.state.disabled?' enemy':''}`}>
+              {this.state.disabled ? 
+              "Opponent Turn"
+                :
+              "Your Turn"
+              }
+          </div>
+          <Board
+            {...this.props}
+            disabled={this.state.disabled}
+            board={this.state.board}
+            onMove={this.handleMove}
+          />
+          <div
+              className="default-button"
+              onClick={this.props.onQuit}
+            >
+              Quit
+          </div>
+        </div>
       </>
     )
-  }
-
-  componentDidMount() {
-    this.setState({ disabled: this.props.gameType == GAME_TYPE.ONLINE_JOIN })
   }
 
   getMyPiece = () => {
@@ -181,13 +190,13 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
 
   handleMove = async (rowIndex: number, colIndex: number) => {
 
-    this.setState({ disabled: true })
-    
     const { board, boardSize } = this.state
-
+    
     if (board[rowIndex][colIndex] != PIECE.EMPTY) {
       return 
     }
+
+    this.setState({ disabled: true })
 
     const sessionId = this.state.sessionId as any as string
     
@@ -219,7 +228,8 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
       board: session.board,
       boardSize: session.boardSize,
       sessionId: session.id,
-      started: true
+      started: true,
+      disabled: !this.checkIfBoardContainsAMove(session.board) && this.props.gameType == GAME_TYPE.ONLINE_JOIN
     })
     
     if (this.props.gameType == GAME_TYPE.ONLINE_JOIN) {
@@ -263,20 +273,31 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
         })
       }
 
-    }, 2000)
+    }, 1500)
   }
 
-  doWinRoutine() {
+  checkIfBoardContainsAMove = (board:Array<Array<PIECE>>) => {
+    for (let i = 0; i < board.length; i++ ){
+      for (let j = 0; j <board[i].length; j++) {
+        if (board[i][j] != PIECE.EMPTY) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  doWinRoutine = () => {
     this._clearInterval()
     this.setState({ showWinState: true })
   }
   
-  doLoseRoutine() {
+  doLoseRoutine = () => {
     this._clearInterval()
     this.setState({ showLoseState: true })
   }
 
-  _clearInterval() {
+  _clearInterval = () => {
     clearInterval(this.state.pollId as any as number)
     this.setState({ pollId: null })
   }

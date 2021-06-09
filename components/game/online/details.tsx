@@ -10,31 +10,18 @@ interface IOnlineGameDetailsProps {
 class OnlineGameDetails extends React.Component<IOnlineGameDetailsProps> {
   render() {
     return (
-      <div className="row game-detail-container">
-        <div className="column">
-          <div className="game-detail">
-            <div className="game-label">Player:</div>
-            <div className="game-value">{this.props.playerName}</div>
-          </div>
-          <div className="game-detail">
-            <div className="game-label">Playing Against:</div>
-            <div className="game-value">{this.props.opponentName || "..."}</div>
-          </div>
-          <div className="game-detail">
-            <div className="game-label">Session ID:</div>
-            <div className="game-value">{this.props.sessionId}</div>
-          </div>
+      <div className="game-detail-container">
+        <div className="game-detail">
+          <div className="game-label">Player:</div>
+          <div className="game-value">{this.props.playerName}</div>
         </div>
-        <div 
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'flex-end'
-        }}
-        className="column">
-          <div className={`game-turn-label${!this.props.isOwnTurn?' enemy':''}`}>
-            {this.props.isOwnTurn?<span>Your Turn</span>:<span>Enemy Turn</span>}
-          </div>
+        <div className="game-detail">
+          <div className="game-label">Playing Against:</div>
+          <div className="game-value">{this.props.opponentName || "..."}</div>
+        </div>
+        <div className="game-detail">
+          <div className="game-label">Session ID:</div>
+          <div className="game-value">{this.props.sessionId}</div>
         </div>
       </div>
     )

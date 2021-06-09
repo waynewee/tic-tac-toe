@@ -14,7 +14,7 @@ class WinOverlay extends React.Component<IWinOverlayProps> {
         <div className="win-overlay">
           <div>
             <div className="win-overlay-name">
-              {this.props.winnerName.toLowerCase()} ({this.props.isLoseState? "not you": "you"}) won!
+              {this.props.winnerName.toLowerCase()} won!
             </div>
             <div 
             onClick={this.props.onClickMenu}

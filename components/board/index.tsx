@@ -6,8 +6,7 @@ interface IBoardProps {
   board: Array<Array<PIECE>>,
   disabled?: boolean,
   onMove: Function,
-  onQuit: MouseEventHandler<HTMLDivElement>,
-  renderGameDetails: Function
+  onQuit: MouseEventHandler<HTMLDivElement>
 }
 
 class Board extends React.Component<IBoardProps> {
@@ -15,37 +14,28 @@ class Board extends React.Component<IBoardProps> {
     const boardSize = this.props.board.length
 
     return (
-      <div className="board-container">
-        {this.props.renderGameDetails()}
-        <div className="board">
-          {this.props.board.map( (row, rowIndex) => {
-            return (
-              <div 
-              style={{ height: `${40/boardSize}vh`}}
-              className="board-row">
-                {row.map( (piece, colIndex) => {
-                  return (
-                    <span
-                      className={`piece-container${rowIndex == 0 ? ' top-bordered':''}${colIndex == 0 ? ' left-bordered':''}`}
-                      onClick={()=>this.handleMove(rowIndex, colIndex)}
-                    >
-                      <Piece
-                        height={`${40/boardSize}vh`}
-                        piece={piece}
-                      />
-                    </span>
-                  )
-                })}
-              </div>
-            )
-          })}
-        </div>
-        <div
-          className="default-button"
-          onClick={this.props.onQuit}
-        >
-          Quit
-        </div>
+      <div className="board">
+        {this.props.board.map( (row, rowIndex) => {
+          return (
+            <div 
+            style={{ height: `${40/boardSize}vh`}}
+            className="board-row">
+              {row.map( (piece, colIndex) => {
+                return (
+                  <span
+                    className={`piece-container${rowIndex == 0 ? ' top-bordered':''}${colIndex == 0 ? ' left-bordered':''}`}
+                    onClick={()=>this.handleMove(rowIndex, colIndex)}
+                  >
+                    <Piece
+                      height={`${40/boardSize}vh`}
+                      piece={piece}
+                    />
+                  </span>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     )
   }
