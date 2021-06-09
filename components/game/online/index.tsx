@@ -4,6 +4,7 @@ import Board from '../../board'
 import { DEFAULT_BOARD_SIZE } from '../../constants'
 import { GAME_TYPE, PIECE } from '../../enums'
 import BoardSizeInput from '../../peripherals/board-size-input'
+import Loader from '../../peripherals/loader'
 import SessionIdInput from '../../peripherals/session-id-input'
 import WinOverlay from '../../peripherals/win-overlay'
 import { checkWin, initBoard } from '../../utils'
@@ -24,7 +25,8 @@ interface IOnlineGameState {
   board: Array<Array<PIECE>>,
   pollId: string | null,
   showWinState: boolean,
-  showLoseState: boolean
+  showLoseState: boolean,
+  loading: boolean
 }
 
 class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
@@ -39,7 +41,8 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     board: initBoard(DEFAULT_BOARD_SIZE),
     pollId: null,
     showWinState: false,
-    showLoseState: false
+    showLoseState: false,
+    loading: false
   }
 
   render(){
@@ -85,6 +88,9 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
         />
         }
         <>
+          {this.state.loading ?
+          <Loader/>
+          :
           <Board
             renderGameDetails={() => {
               return (
@@ -99,7 +105,7 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
             disabled={this.state.disabled}
             board={this.state.board}
             onMove={this.handleMove}
-          />
+          />}
         </>
       </>
     )
@@ -127,9 +133,15 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
   }
 
   handleSubmitBoardSize = async (boardSize: number) => {
-    const res = await _getNewSession(boardSize)
-    const { session, playerName } = res.data
-    this.startSession(session, playerName)
+    try {
+      this.setState({ loading: true })
+      const res = await _getNewSession(boardSize)
+      this.setState({ loading: false })
+      const { session, playerName } = res.data
+      this.startSession(session, playerName)
+    } catch(e) {
+      alert("Woops, couldn't create a game. Check your internet connection?")
+    }
   }
 
   handleChangeSessionId = (sessionId: string) => {
@@ -138,7 +150,9 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
 
   handleSubmitSessionId = async () => {
     try {
+      this.setState({ loading: true })
       const sessionId = this.state.sessionId as any as string
+      this.setState({ loading: false })
       const res = await _getSession(sessionId)
       const { session, playerName } = res.data
       this.startSession(session, playerName)
@@ -165,29 +179,26 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     const sessionId = this.state.sessionId as any as string
     
     const piece = this.getMyPiece()
-    await _postMove(sessionId, rowIndex, colIndex, piece)
-  
+    
     board[rowIndex][colIndex] = piece
-  
-    this.setState({ 
-      board
-    }, () => {
-      const hasWon = checkWin({
-        rowIndex, 
-        colIndex, 
-        piece, 
-        boardSize, 
-        board
-      })
+    this.setState({ board })
+    
+    await _postMove(sessionId, rowIndex, colIndex, piece)
 
-      if (hasWon) {
-        this.doWinRoutine()
-      } else {
-        this.startPoll()
-        this.setState({ disabled: true })
-      }
+    const hasWon = checkWin({
+      rowIndex, 
+      colIndex, 
+      piece, 
+      boardSize, 
+      board
     })
-  
+
+    if (hasWon) {
+      this.doWinRoutine()
+    } else {
+      this.startPoll()
+      this.setState({ disabled: true })
+    }
   }
 
   startSession = (session: any, playerName: string) => {
