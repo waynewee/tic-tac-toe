@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-import {PIECE} from './enums'
+import {PIECE} from './components/enums'
 
 const production = process.env.NODE_ENV === 'production'
 
 let API_URL = `http://localhost:8000`
 
 if (production) {
-  API_URL = `http://18.117.252.73`
+  API_URL = `http://ec2-18-117-252-73.us-east-2.compute.amazonaws.com`
 }
 
 export const _getNewSession = (boardSize: number) => axios({
