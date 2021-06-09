@@ -29,10 +29,17 @@ export function checkWin({
   boardSize: number
 }){
 
-  return checkWinHorizontal()
+  const won = checkWinHorizontal()
     || checkWinVertical()
     || checkWinLeftDiagonal()
     || checkWinRightDiagonal()
+
+  const draw = !won && checkCompleted()
+
+  return {
+    won,
+    draw
+  }
 
   function checkWinHorizontal(){
     const i = rowIndex
@@ -83,6 +90,17 @@ export function checkWin({
       }
       i -= 1
       j += 1
+    }
+    return true
+  }
+
+  function checkCompleted(){
+    for (let i = 0; i < boardSize; i++){
+      for (let j = 0; j < boardSize; j++) {
+        if (board[i][j] ==  PIECE.EMPTY) {
+          return false
+        }
+      }
     }
     return true
   }

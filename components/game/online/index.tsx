@@ -26,6 +26,7 @@ interface IOnlineGameState {
   pollId: string | null,
   showWinState: boolean,
   showLoseState: boolean,
+  showDrawState: boolean
   loading: boolean
 }
 
@@ -42,6 +43,7 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     pollId: null,
     showWinState: false,
     showLoseState: false,
+    showDrawState: false,
     loading: false
   }
 
@@ -78,16 +80,18 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
 
     return (
       <>
-        {this.state.showWinState && 
+        {(this.state.showWinState || this.state.showDrawState) && 
         <WinOverlay
-          winnerName={playerName}
+          isDrawState={this.state.showDrawState}
+          winner={playerName}
           onClickMenu={this.handleQuit}
         />
         }
         {this.state.showLoseState &&
         <WinOverlay
+          isDrawState={this.state.showDrawState}
           isLoseState
-          winnerName={opponentName}
+          winner={opponentName}
           onClickMenu={this.handleQuit}
         />
         }
@@ -207,7 +211,7 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     
     await _postMove(sessionId, rowIndex, colIndex, piece)
 
-    const hasWon = checkWin({
+    const { won, draw } = checkWin({
       rowIndex, 
       colIndex, 
       piece, 
@@ -215,11 +219,15 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
       board
     })
 
-    if (hasWon) {
-      this.doWinRoutine()
-    } else {
-      this.startPoll()
+    if (won) {
+      return this.doWinRoutine()
+    } 
+
+    if (draw) {
+      return this.doDrawRoutine()
     }
+
+    this.startPoll()
   }
 
   startSession = (session: any, playerName: string) => {
@@ -258,7 +266,7 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
             board: session.board,
             opponentName
           }, () => {
-            const hasLost = checkWin({
+            const {won, draw} = checkWin({
               rowIndex: session.latestMove.i, 
               colIndex: session.latestMove.j, 
               piece, 
@@ -266,8 +274,12 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
               board: session.board
             })
   
-            if (hasLost) {
-              this.doLoseRoutine()
+            if (won) {
+              return this.doLoseRoutine()
+            }
+
+            if (draw) {
+              return this.doDrawRoutine()
             }
           })
         })
@@ -295,6 +307,11 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
   doLoseRoutine = () => {
     this._clearInterval()
     this.setState({ showLoseState: true })
+  }
+
+  doDrawRoutine = () => {
+    this._clearInterval()
+    this.setState({ showDrawState: true })
   }
 
   _clearInterval = () => {

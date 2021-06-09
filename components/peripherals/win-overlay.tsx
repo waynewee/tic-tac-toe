@@ -1,9 +1,10 @@
 import React, { MouseEventHandler } from 'react'
 
 interface IWinOverlayProps {
-  winnerName: string,
+  winner: any,
   onClickMenu: MouseEventHandler<HTMLDivElement>,
-  isLoseState?: boolean
+  isLoseState?: boolean,
+  isDrawState?:boolean
 }
 
 class WinOverlay extends React.Component<IWinOverlayProps> {
@@ -14,7 +15,11 @@ class WinOverlay extends React.Component<IWinOverlayProps> {
           <div className="win-overlay-content">
             <div>
               <div className="win-overlay-name">
-                {this.props.winnerName.toLowerCase()} won!
+                {this.props.isDrawState ?
+                <span>It's a draw!</span>
+                :
+                <span>{this.props.winner} won!</span>
+                }
               </div>
               <div 
               onClick={this.props.onClickMenu}

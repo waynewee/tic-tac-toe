@@ -16,6 +16,7 @@ interface ILocalGameState {
   boardSize: number,
   activePiece: PIECE,
   showWinState: boolean,
+  showDrawState: boolean,
   started: boolean
 }
 
@@ -26,6 +27,7 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
     boardSize: DEFAULT_BOARD_SIZE,
     activePiece: PIECE.CIRCLE,
     showWinState: false,
+    showDrawState: false,
     started: false
   }
 
@@ -40,11 +42,14 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
       )
     }
 
+    const activePieceIcon = this.state.activePiece == PIECE.CIRCLE? circleIcon : crossIcon
+
     return (
       <>
-        {this.state.showWinState &&
+        {(this.state.showWinState || this.state.showDrawState) &&
         <WinOverlay
-          winnerName={this.state.activePiece}
+          isDrawState={this.state.showDrawState}
+          winner={this.state.activePiece}
           onClickMenu={this.props.onQuit}
         />
         }
@@ -53,7 +58,7 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
             <div 
             style={{ marginBottom: 8}}
             className="turn-label">
-              {this.state.activePiece == PIECE.CIRCLE? circleIcon : crossIcon}
+              {activePieceIcon}
               <span>
                 Turn
               </span>
@@ -96,7 +101,7 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
       board
     }, () => {
 
-      const hasWon = checkWin({
+      const { won, draw } = checkWin({
         rowIndex,
         colIndex,
         piece: this.state.activePiece,
@@ -104,9 +109,14 @@ class LocalGame extends React.Component<ILocalGameProps, ILocalGameState> {
         board
       })
 
-      if (hasWon) {
+      if (won) {
         return this.setState({ showWinState: true })
       }
+
+      if (draw) {
+        return this.setState({ showDrawState: true })
+      }
+
       this.toggleActivePiece()
     })
 
