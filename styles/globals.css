@@ -74,17 +74,15 @@ input.error {
   border: 1px solid #282828;
 }
 
-.default-button:hover,
-.default-button.default-button-solid
-{
+.default-button.default-button-solid {
   background: #282828;
   color: #fff;
 }
 
-@media only screen and (max-width: 768px) {
+@media (hover: hover) {
   .default-button:hover {
-    background: auto;
-    color: auto;
+    background: #282828;
+    color: #fff; 
   }
 }
 
