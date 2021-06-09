@@ -32,7 +32,7 @@ class OnlineGameDetails extends React.Component<IOnlineGameDetailsProps> {
           alignItems: 'flex-end'
         }}
         className="column">
-          <div className="game-turn-label">
+          <div className={`game-turn-label${!this.props.isOwnTurn?' enemy':''}`}>
             {this.props.isOwnTurn?<span>Your Turn</span>:<span>Enemy Turn</span>}
           </div>
         </div>

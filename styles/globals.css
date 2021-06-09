@@ -100,6 +100,7 @@ input.error {
 }
 
 .board-container {
+  max-width: 90vw;
   margin-top: -5vh;
 }
 
@@ -151,9 +152,13 @@ input.error {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 8px;
+}
+
+.game-turn-label.enemy {
+  color: red;
 }
 
 .game-turn-label svg {
