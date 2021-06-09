@@ -95,6 +95,10 @@ input.error {
   cursor: not-allowed
 }
 
+.board {
+  text-align: center;
+}
+
 .board-container {
   margin-top: -5vh;
 }
