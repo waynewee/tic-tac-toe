@@ -5,8 +5,7 @@ import Piece from './piece'
 interface IBoardProps {
   board: Array<Array<PIECE>>,
   disabled?: boolean,
-  onMove: Function,
-  onQuit: MouseEventHandler<HTMLDivElement>
+  onMove: Function
 }
 
 class Board extends React.Component<IBoardProps> {

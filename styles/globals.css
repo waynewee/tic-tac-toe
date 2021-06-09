@@ -189,6 +189,7 @@ input.error {
 }
 
 .win-overlay-name {
+  word-break: break-all;
   font-size: 32px;
   margin: auto;
   color: white;

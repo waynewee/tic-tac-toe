@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from 'react'
-import { _getNewSession, _getSession, _postMove } from '../../../services'
+import { _deleteSession, _getNewSession, _getSession, _postMove } from '../../../services'
 import Board from '../../board'
 import { DEFAULT_BOARD_SIZE } from '../../constants'
 import { GAME_TYPE, PIECE } from '../../enums'
@@ -12,7 +12,7 @@ import OnlineGameDetails from './details'
 
 interface IOnlineGameProps {
   gameType: GAME_TYPE,
-  onQuit: MouseEventHandler<HTMLDivElement>
+  onQuit: Function
 }
 
 interface IOnlineGameState {
@@ -112,14 +112,13 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
               }
           </div>
           <Board
-            {...this.props}
             disabled={this.state.disabled}
             board={this.state.board}
             onMove={this.handleMove}
           />
           <div
               className="default-button"
-              onClick={this.props.onQuit}
+              onClick={this.handleQuit}
             >
               Quit
           </div>
@@ -149,11 +148,16 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
     return session.homePlayerName
   }
 
-  handleQuit = (e: any) => {
+  handleQuit = async () => {
     if (this.state.pollId) {
       clearInterval(this.state.pollId as any as number)
     }
-    this.props.onQuit(e)
+    this.setState({ loading: true })
+    if (this.state.sessionId) {
+      await _deleteSession(this.state.sessionId as any as string)
+    }
+    this.setState({ loading: false })
+    this.props.onQuit()
   }
 
   handleSubmitBoardSize = async (boardSize: number) => {
@@ -250,39 +254,44 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
 
       this.setState({ pollId: pollId as any as string })
 
-      const res = await _getSession(this.state.sessionId as any as string, this.state.playerName as any as string)
-      const { session } = res.data
-      
-      if (JSON.stringify(session.board) != JSON.stringify(this.state.board)) {
-        this.setState({
-          disabled: false
-        }, () => {
-          this._clearInterval()
-
-          const piece = this.getOpponentPiece()
-          const opponentName = this.getOpponentName(session)
-          
+      try {
+        const res = await _getSession(this.state.sessionId as any as string, this.state.playerName as any as string)
+        const { session } = res.data
+        
+        if (JSON.stringify(session.board) != JSON.stringify(this.state.board)) {
           this.setState({
-            board: session.board,
-            opponentName
+            disabled: false
           }, () => {
-            const {won, draw} = checkWin({
-              rowIndex: session.latestMove.i, 
-              colIndex: session.latestMove.j, 
-              piece, 
-              boardSize: session.boardSize, 
-              board: session.board
-            })
+            this._clearInterval()
   
-            if (won) {
-              return this.doLoseRoutine()
-            }
-
-            if (draw) {
-              return this.doDrawRoutine()
-            }
+            const piece = this.getOpponentPiece()
+            const opponentName = this.getOpponentName(session)
+            
+            this.setState({
+              board: session.board,
+              opponentName
+            }, () => {
+              const {won, draw} = checkWin({
+                rowIndex: session.latestMove.i, 
+                colIndex: session.latestMove.j, 
+                piece, 
+                boardSize: session.boardSize, 
+                board: session.board
+              })
+    
+              if (won) {
+                return this.doLoseRoutine()
+              }
+  
+              if (draw) {
+                return this.doDrawRoutine()
+              }
+            })
           })
-        })
+        }
+      } catch (e) {
+        alert("Your opponent gave up!")
+        this.handleQuit()
       }
 
     }, 1500)

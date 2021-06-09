@@ -27,3 +27,9 @@ export const _postMove = (sessionId: string, rowIndex: number, colIndex: number,
   withCredentials: true,
   url: `${API_URL}/${sessionId}?i=${rowIndex}&j=${colIndex}&piece=${piece}`
 })
+
+export const _deleteSession = (sessionId: string) => axios({
+  method: 'delete',
+  withCredentials: true,
+  url: `${API_URL}/${sessionId}`
+})
