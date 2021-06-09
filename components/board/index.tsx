@@ -21,7 +21,7 @@ class Board extends React.Component<IBoardProps> {
           {this.props.board.map( (row, rowIndex) => {
             return (
               <div 
-              style={{ height: `${50/boardSize}vh`}}
+              style={{ height: `${40/boardSize}vh`}}
               className="board-row">
                 {row.map( (piece, colIndex) => {
                   return (
@@ -30,7 +30,7 @@ class Board extends React.Component<IBoardProps> {
                       onClick={()=>this.handleMove(rowIndex, colIndex)}
                     >
                       <Piece
-                        height={`${50/boardSize}vh`}
+                        height={`${40/boardSize}vh`}
                         piece={piece}
                       />
                     </span>

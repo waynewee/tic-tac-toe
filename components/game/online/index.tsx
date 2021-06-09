@@ -180,6 +180,8 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
   }
 
   handleMove = async (rowIndex: number, colIndex: number) => {
+
+    this.setState({ disabled: true })
     
     const { board, boardSize } = this.state
 
@@ -208,7 +210,6 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
       this.doWinRoutine()
     } else {
       this.startPoll()
-      this.setState({ disabled: true })
     }
   }
 
