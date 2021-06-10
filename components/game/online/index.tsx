@@ -290,8 +290,13 @@ class OnlineGame extends React.Component<IOnlineGameProps, IOnlineGameState> {
           })
         }
       } catch (e) {
-        alert("Your opponent gave up!")
-        this.handleQuit()
+        if (this.state.showWinState
+          ||this.state.showDrawState 
+          ||this.state.showLoseState) {
+            return
+          }
+          alert("Your opponent gave up!")
+          this.handleQuit()
       }
 
     }, 1500)
