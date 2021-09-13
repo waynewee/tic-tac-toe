@@ -7,7 +7,7 @@ const production = process.env.NODE_ENV === "production";
 let API_URL = `http://localhost:8000`;
 
 if (production) {
-  API_URL = `http://3.143.72.165/`;
+  API_URL = `http://3.143.72.165`;
 }
 
 export const _getNewSession = (boardSize: number) =>
